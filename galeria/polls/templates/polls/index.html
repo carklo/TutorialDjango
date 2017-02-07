@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        (function()
+            {
+                $.getJSON("http://localhost:8000/polls/images").done(function ( data) {
+                    $.each(data, function(i, item) {
+                            if (item.fields.imageFile == "" || item.fields.imageFile == undefined)
+                            {
+                                $( "#imagenes").prepend('<div class="col-md-4 col-sm-6 col-lg-3 well"><img src="'+ item.fields.url + '" class="img-responsive" style="width: 500px; height: 300px"> </div>');
+                            }
+                            else
+                            {
+                                $( "#imagenes").prepend('<div class="col-md-4 col-sm-6 col-lg-3 well"><img src="http://localhost:8000/' + item.fields.imageFile + '" class="img-responsive" style="width: 500px; height: 300px"> </div>');
+                            }
+                        });
+                    });
+
+            })();
+
+        (function () {
+            $.getJSON( "http://localhost:8000/polls/isLogged").done( function ( data ) {
+                if(data.mensaje == 'no')
+                {
+                    $("#add_user").show();
+                    $("#add_image").hide();
+                    $("#cerrar_session").hide();
+                    $("#login_user").show();
+                }
+                else
+                {
+                    $("#add_user").hide();
+                    $("#add_image").show();
+                    $("#cerrar_session").show();
+                    $("#login_user").hide();
+                }
+            });
+        })();
+        
+        function logout() {
+            $.getJSON("http://localhost:8000/polls/logout").done( function( data)
+            {
+                if(data.mensaje == "ok")
+                {
+                    location.reload();
+                }
+                else
+                {
+                    alert('Hubo un error');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-targer="#navbar" aria-expandend="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'images:index' %}">Galeria</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav"></ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li id="add_image"><a href="http://localhost:8000/polls/agregarImagen">Agregar Imagen</a></li>
+                <li id="add_user"><a href="http://localhost:8000/polls/agregarUsuario">Registro</a></li>
+                <li id="cerrar_session"><a class="glyphicon glyphicon-log-out" href="#" id="click_cerrar_session" onclick="logout();"> Logout</a></li>
+                <li id="login_user"><a class="glyphicon glyphicon-log-in" href="http://localhost:8000/polls/ingresar"> Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br>
+<br>
+<h1 align="center">
+    GALERIA
+</h1>
+
+<div class="row" id="imagenes"></div>
+</body>
+</html>
